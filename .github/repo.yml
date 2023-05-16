@@ -1,0 +1,15 @@
+# Which github team is the maintainer of the repository. Maintainers have special permissions
+# and are responsible for the code in the repository in all meaningful ways. They may use 
+# CODEOWNERS to delegate ownership of sub-folders
+maintainer: Roblox/ml-coders
+
+pull_requests:
+  always_show_update_pull_request_button: true
+  auto_delete_branch_after_merge: true
+  allow_auto_merge: true
+  
+  dismiss_stale_approvals: true
+  minimum_approvals: 1
+  
+  require_branch_up_to_date: true
+  require_conversation_resolution: false

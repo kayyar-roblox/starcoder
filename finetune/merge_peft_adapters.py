@@ -10,7 +10,7 @@ flags.DEFINE_string(
     "base_model_name_or_path", "bigcode/large-model", "Base model name or path."
 )
 flags.DEFINE_string("peft_model_path", "/", "PEFT model path.")
-flags.DEFINE_bool("push_to_hub", True, "Push to hub.")
+flags.DEFINE_bool("push_to_hub", False, "Push to hub.")
 
 
 def main(argv):

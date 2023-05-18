@@ -24,7 +24,7 @@ def main(argv):
 
     # Make sure GPU is being used when available
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print(f"device: {device}")
+    print(f"Model loaded to device: {device}")
     model.to(device)
 
     tokenizer = AutoTokenizer.from_pretrained(FLAGS.base_model_name_or_path)

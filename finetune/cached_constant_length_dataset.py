@@ -73,13 +73,18 @@ def load_prepared_dataset(tokenizer, path: str):
 
     { "input_ids": torch.LongTensor, "labels": torch.LongTensor }
     """
-    chunked_dataset = datasets.load_dataset("json", data_files=path, split="train")
+    chunked_dataset = datasets.load_dataset(
+        "json", data_files=path, split="train"
+    )
     return chunked_dataset.map(
-        lambda item: tokenize_cached_item(tokenizer, item), remove_columns=["chunks"]
+        lambda item: tokenize_cached_item(tokenizer, item),
+        remove_columns=["chunks"],
     )
 
 
-def chunk_dataset(tokenizer: AutoTokenizer, dataset, input_select_fn, max_length: int):
+def chunk_dataset(
+    tokenizer: AutoTokenizer, dataset, input_select_fn, max_length: int
+):
     """
     A generator function that produces the text in every row of dataset,
     broken into chunks of length at most max_length (including the EOS token).
@@ -111,7 +116,9 @@ def chunk_dataset(tokenizer: AutoTokenizer, dataset, input_select_fn, max_length
             return_offsets_mapping=True,
         )
         max_chunk_index = len(tokenized_items["offset_mapping"]) - 1
-        for chunk_index, offsets in enumerate(tokenized_items["offset_mapping"]):
+        for chunk_index, offsets in enumerate(
+            tokenized_items["offset_mapping"]
+        ):
             first_token_start = offsets[0][0]
             last_token_end = offsets[-1][1]
             is_final_chunk = chunk_index == max_chunk_index
@@ -152,4 +159,7 @@ def tokenize_cached_item(tokenizer, item):
             tokens.append(tokenizer.eos_token_id)
     pad_token_id = tokenizer.pad_token_id or tokenizer.eos_token_id
     tokens.extend([pad_token_id] * (max_length - len(tokens)))
-    return {"input_ids": torch.LongTensor(tokens), "labels": torch.LongTensor(tokens)}
+    return {
+        "input_ids": torch.LongTensor(tokens),
+        "labels": torch.LongTensor(tokens),
+    }

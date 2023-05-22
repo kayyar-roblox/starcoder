@@ -10,7 +10,6 @@ flags.DEFINE_string(
     "base_model_name_or_path", "bigcode/large-model", "Base model name or path."
 )
 flags.DEFINE_string("peft_model_path", "/", "PEFT model path.")
-flags.DEFINE_bool("push_to_hub", False, "Push to hub.")
 
 
 def main(argv):
@@ -26,22 +25,9 @@ def main(argv):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     tokenizer = AutoTokenizer.from_pretrained(FLAGS.base_model_name_or_path)
 
-    if FLAGS.push_to_hub:
-        print(f"Saving to hub ...")
-        model.push_to_hub(
-            f"{FLAGS.base_model_name_or_path}-merged",
-            use_temp_dir=False,
-            private=True,
-        )
-        tokenizer.push_to_hub(
-            f"{FLAGS.base_model_name_or_path}-merged",
-            use_temp_dir=False,
-            private=True,
-        )
-    else:
-        model.save_pretrained(f"{FLAGS.base_model_name_or_path}-merged")
-        tokenizer.save_pretrained(f"{FLAGS.base_model_name_or_path}-merged")
-        print(f"Model saved to {FLAGS.base_model_name_or_path}-merged")
+    model.save_pretrained(f"{FLAGS.base_model_name_or_path}-merged")
+    tokenizer.save_pretrained(f"{FLAGS.base_model_name_or_path}-merged")
+    print(f"Model saved to {FLAGS.base_model_name_or_path}-merged")
 
 
 if __name__ == "__main__":

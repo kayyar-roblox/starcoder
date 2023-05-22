@@ -1,13 +1,15 @@
 from tqdm import tqdm
+from typing import Any, Dict
+import os
 
 
 def chars_token_ratio(
-    dataset,
-    tokenizer,
-    input_column_name="prompt",
-    output_column_name="completion",
-    nb_examples=400,
-):
+    dataset: Any,
+    tokenizer: Any,
+    input_column_name: str = "prompt",
+    output_column_name: str = "completion",
+    nb_examples: int = 400,
+) -> float:
     """
     Estimate the average number of characters per token in the dataset.
     """
@@ -27,7 +29,7 @@ def chars_token_ratio(
     return total_characters / total_tokens
 
 
-def print_trainable_parameters(model):
+def print_trainable_parameters(model: Any) -> None:
     """
     Prints the number of trainable parameters in the model.
     """
@@ -43,8 +45,10 @@ def print_trainable_parameters(model):
 
 
 def prepare_sample_text(
-    example, input_column_name="prompt", output_column_name="completion"
-):
+    example: Dict[str, Any],
+    input_column_name: str = "prompt",
+    output_column_name: str = "completion",
+) -> str:
     """Prepare the text from a sample of the dataset."""
     text = f"Question: {example[input_column_name]}\n\nAnswer: {example[output_column_name]}"
     return text

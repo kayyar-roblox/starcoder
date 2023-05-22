@@ -14,9 +14,33 @@ from transformers import AutoTokenizer, GPT2TokenizerFast, logging, set_seed
 from dataset_types import ConstantLengthDataset, TestTrainDataset
 from dataset_utils import create_datasets
 from training_utils import run_training
+import pdb
 
 # Model and Dataset
-flags.DEFINE_string("model_path", "bigcode/large-model", "Model path.")
+
+
+def get_gpu_memory_in_mb():
+    """Returns the currently available GPU memory in MB."""
+    import torch
+
+    # Return 0 if no GPU is available.
+    if not torch.cuda.is_available():
+        return 0
+
+    ret = torch.cuda.get_device_properties(0).total_memory
+    ret = ret / 1024 / 1024 // 1024
+    return ret
+
+
+def get_default_model():
+    # Use bigcode/santacoder if GPU memory is below 32 Mb, bigcode/starcoder otherwise.
+    if get_gpu_memory_in_mb() < 32 * 1024:
+        return "bigcode/santacoder"
+
+    return "bigcode/starcoder"
+
+
+flags.DEFINE_string("model_path", get_default_model(), "Model path.")
 flags.DEFINE_string(
     "dataset_name", "HuggingFaceH4/CodeAlpaca_20K", "Dataset name."
 )
@@ -68,7 +92,7 @@ def main(unused_args) -> None:
     logging.set_verbosity_error()
 
     tokenizer: GPT2TokenizerFast = AutoTokenizer.from_pretrained(
-        FLAGS.model_path, use_auth_token=True
+        FLAGS.model_path, trust_remote_code=True, use_auth_token=True
     )
     train_dataset, eval_dataset = create_datasets(tokenizer, flags.FLAGS)
     run_training(flags.FLAGS, train_dataset, eval_dataset)

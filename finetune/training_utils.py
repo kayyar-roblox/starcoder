@@ -1,5 +1,6 @@
 from transformers import (
     AutoModelForCausalLM,
+    Trainer,
     TrainerCallback,
     TrainingArguments,
     TrainerState,
@@ -69,6 +70,7 @@ def run_training(
     model = AutoModelForCausalLM.from_pretrained(
         args.model_path,
         use_auth_token=True,
+        trust_remote_code=True,
         use_cache=not args.no_gradient_checkpointing,
         load_in_8bit=True,
         device_map={"": Accelerator().process_index},

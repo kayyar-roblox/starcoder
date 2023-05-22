@@ -1,6 +1,8 @@
 from torch.utils.data import IterableDataset
 from typing import Iterable, Tuple
 from transformers import GPT2TokenizerFast
+from utils import prepare_sample_text
+import torch
 
 TestTrainDataset = Tuple[IterableDataset, IterableDataset]
 

@@ -28,12 +28,12 @@ def get_gpu_memory_in_mb():
         return 0
 
     ret = torch.cuda.get_device_properties(0).total_memory
-    ret = ret / 1024 / 1024 // 1024
+    ret = ret / 1024 / 1024
     return ret
 
 
 def get_default_model():
-    # Use bigcode/santacoder if GPU memory is below 32 Mb, bigcode/starcoder otherwise.
+    # Use bigcode/santacoder if GPU memory is below 32 Gb, bigcode/starcoder otherwise.
     if get_gpu_memory_in_mb() < 32 * 1024:
         return "bigcode/santacoder"
 

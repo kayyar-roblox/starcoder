@@ -67,7 +67,7 @@ def save_prepared_dataset(
             output_dest_row(output_file, max_length, dest_row)
 
 
-def load_prepared_dataset(tokenizer, path: str):
+def load_prepared_dataset(tokenizer, path: str) -> datasets.Dataset:
     """
     Turns a prepared dataset into a dataset of items for training. Each item is:
 

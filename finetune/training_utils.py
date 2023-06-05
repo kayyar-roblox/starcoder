@@ -1,13 +1,7 @@
 import os
+
 import torch
-from transformers import (
-    AutoModelForCausalLM,
-    Trainer,
-    TrainerCallback,
-    TrainingArguments,
-    TrainerState,
-    TrainerControl,
-)
+from absl import flags
 from accelerate import Accelerator
 from peft import (
     LoraConfig,
@@ -15,10 +9,19 @@ from peft import (
     prepare_model_for_int8_training,
     set_peft_model_state_dict,
 )
-from utils import print_trainable_parameters
-from absl import flags
-from dataset_types import ConstantLengthDataset
+from transformers import (
+    AutoModelForCausalLM,
+    Trainer,
+    TrainerCallback,
+    TrainerControl,
+    TrainerState,
+    TrainingArguments,
+)
 from transformers.trainer_utils import PREFIX_CHECKPOINT_DIR
+
+from dataset_types import ConstantLengthDataset
+from utils import print_trainable_parameters
+
 
 class SavePeftModelCallback(TrainerCallback):
     def on_save(
@@ -63,26 +66,26 @@ class LoadBestPeftModelCallback(TrainerCallback):
 
 
 def run_training(
-    args: flags.FlagValues,
+    flagValues: flags.FlagValues,
     train_data: ConstantLengthDataset,
     val_data: ConstantLengthDataset,
 ) -> None:
     print("Loading the model")
     # disable caching mechanism when using gradient checkpointing
     model = AutoModelForCausalLM.from_pretrained(
-        args.model_path,
+        flagValues.model_path,
         use_auth_token=True,
         trust_remote_code=True,
-        use_cache=not args.no_gradient_checkpointing,
+        use_cache=not flagValues.no_gradient_checkpointing,
         load_in_8bit=True,
         device_map={"": Accelerator().process_index},
     )
     model = prepare_model_for_int8_training(model)
 
     lora_config = LoraConfig(
-        r=args.lora_r,
-        lora_alpha=args.lora_alpha,
-        lora_dropout=args.lora_dropout,
+        r=flagValues.lora_r,
+        lora_alpha=flagValues.lora_alpha,
+        lora_dropout=flagValues.lora_dropout,
         bias="none",
         task_type="CAUSAL_LM",
         target_modules=["c_proj", "c_attn", "q_attn"],
@@ -97,23 +100,23 @@ def run_training(
     print("Starting main loop")
 
     training_args = TrainingArguments(
-        output_dir=args.output_dir,
+        output_dir=flagValues.output_dir,
         dataloader_drop_last=True,
         evaluation_strategy="steps",
-        max_steps=args.max_steps,
-        eval_steps=args.eval_freq,
-        save_steps=args.save_freq,
-        logging_steps=args.log_freq,
-        per_device_train_batch_size=args.batch_size,
-        per_device_eval_batch_size=args.batch_size,
-        learning_rate=args.learning_rate,
-        lr_scheduler_type=args.lr_scheduler_type,
-        warmup_steps=args.num_warmup_steps,
-        gradient_accumulation_steps=args.gradient_accumulation_steps,
-        gradient_checkpointing=not args.no_gradient_checkpointing,
-        fp16=not args.no_fp16,
-        bf16=args.bf16,
-        weight_decay=args.weight_decay,
+        max_steps=flagValues.max_steps,
+        eval_steps=flagValues.eval_freq,
+        save_steps=flagValues.save_freq,
+        logging_steps=flagValues.log_freq,
+        per_device_train_batch_size=flagValues.batch_size,
+        per_device_eval_batch_size=flagValues.batch_size,
+        learning_rate=flagValues.learning_rate,
+        lr_scheduler_type=flagValues.lr_scheduler_type,
+        warmup_steps=flagValues.num_warmup_steps,
+        gradient_accumulation_steps=flagValues.gradient_accumulation_steps,
+        gradient_checkpointing=not flagValues.no_gradient_checkpointing,
+        fp16=not flagValues.no_fp16,
+        bf16=flagValues.bf16,
+        weight_decay=flagValues.weight_decay,
         run_name="StarCoder-finetuned",
         report_to="wandb",
         ddp_find_unused_parameters=False,
@@ -133,4 +136,6 @@ def run_training(
     trainer.train()
 
     print("Saving last checkpoint of the model")
-    model.save_pretrained(os.path.join(args.output_dir, "final_checkpoint/"))
+    model.save_pretrained(
+        os.path.join(flagValues.output_dir, "final_checkpoint/")
+    )

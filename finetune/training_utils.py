@@ -117,7 +117,7 @@ def run_training(
         fp16=not flagValues.no_fp16,
         bf16=flagValues.bf16,
         weight_decay=flagValues.weight_decay,
-        run_name="StarCoder-finetuned",
+        run_name=f"{flagValues.model_path}-{flagValues.dataset_name}-finetuned",
         report_to="wandb",
         ddp_find_unused_parameters=False,
         metric_for_best_model="eval_loss",

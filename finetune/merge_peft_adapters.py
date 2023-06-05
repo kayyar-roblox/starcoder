@@ -28,7 +28,9 @@ def main(argv):
     model.to(device)
 
     tokenizer = AutoTokenizer.from_pretrained(FLAGS.base_model_name_or_path)
-    merged_model_path = f"{FLAGS.base_model_name_or_path}-{FLAGS.peft_model_path}"
+    merged_model_path = (
+        f"{FLAGS.base_model_name_or_path}-{FLAGS.peft_model_path}"
+    )
 
     model.save_pretrained(merged_model_path)
     tokenizer.save_pretrained(merged_model_path)

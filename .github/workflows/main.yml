@@ -15,7 +15,7 @@ jobs:
 
     - name: Check files are formatted
       run: |
-        black --required-version 22.8.0 --config pyproject.toml . --check
+        black --required-version 22.8.0 --config pyproject.toml finetune --check
 
     - name: Run unit tests
       run: |

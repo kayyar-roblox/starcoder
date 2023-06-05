@@ -1,4 +1,3 @@
-import os
 import torch
 from absl import app, flags
 from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -17,6 +16,7 @@ def main(argv):
         FLAGS.base_model_name_or_path,
         return_dict=True,
         torch_dtype=torch.float16,
+        trust_remote_code=True,
     )
 
     model = PeftModel.from_pretrained(base_model, FLAGS.peft_model_path)

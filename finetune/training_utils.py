@@ -1,3 +1,5 @@
+import os
+import torch
 from transformers import (
     AutoModelForCausalLM,
     Trainer,
@@ -16,9 +18,7 @@ from peft import (
 from utils import print_trainable_parameters
 from absl import flags
 from dataset_types import ConstantLengthDataset
-import os
 from transformers.trainer_utils import PREFIX_CHECKPOINT_DIR
-import torch
 
 class SavePeftModelCallback(TrainerCallback):
     def on_save(
@@ -38,7 +38,7 @@ class SavePeftModelCallback(TrainerCallback):
         pytorch_model_path = os.path.join(
             checkpoint_folder, "pytorch_model.bin"
         )
-        torch.save({}, pytorch_model_path)
+        torch.save(kwargs["model"].state_dict(), pytorch_model_path)
         return control
 
 
@@ -117,6 +117,8 @@ def run_training(
         run_name="StarCoder-finetuned",
         report_to="wandb",
         ddp_find_unused_parameters=False,
+        metric_for_best_model="eval_loss",
+        load_best_model_at_end=True,
     )
 
     trainer = Trainer(

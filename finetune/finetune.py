@@ -41,9 +41,7 @@ def get_default_model():
 
 
 flags.DEFINE_string("model_path", get_default_model(), "Model path.")
-flags.DEFINE_string(
-    "dataset_name", "HuggingFaceH4/CodeAlpaca_20K", "Dataset name."
-)
+flags.DEFINE_string("dataset_name", "test_data", "Dataset name.")
 flags.DEFINE_string("subset", None, "Subset.")
 flags.DEFINE_string("split", None, "Split.")
 flags.DEFINE_enum(

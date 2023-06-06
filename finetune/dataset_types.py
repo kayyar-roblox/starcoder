@@ -3,6 +3,8 @@ from typing import Iterable, Tuple
 from transformers import GPT2TokenizerFast
 from utils import prepare_sample_text
 import torch
+import time
+import pdb
 
 TestTrainDataset = Tuple[IterableDataset, IterableDataset]
 
@@ -43,10 +45,17 @@ class ConstantLengthDataset(IterableDataset):
         self.max_buffer_size = seq_length * chars_per_token * num_of_sequences
         self.input_column_name = input_column_name
         self.output_column_name = output_column_name
+        self.epoch = 0
 
     def __iter__(self):
         iterator = iter(self.dataset)
         more_examples = True
+        print(
+            time.strftime(
+                f"%Y-%m-%d %H:%M:%S Start Epoch {self.epoch}",
+                time.localtime(time.time()),
+            )
+        )
         while more_examples:
             buffer, buffer_len = [], 0
             while True:
@@ -63,6 +72,13 @@ class ConstantLengthDataset(IterableDataset):
                     buffer_len += len(buffer[-1])
                 except StopIteration:
                     if self.infinite:
+                        print(
+                            time.strftime(
+                                f"%Y-%m-%d %H:%M:%S Epoch {self.epoch}",
+                                time.localtime(time.time()),
+                            )
+                        )
+                        self.epoch += 1
                         iterator = iter(self.dataset)
                     else:
                         more_examples = False

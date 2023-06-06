@@ -120,8 +120,6 @@ def run_training(
         run_name=f"{flagValues.model_path}-{flagValues.dataset_name}-finetuned",
         report_to="wandb",
         ddp_find_unused_parameters=False,
-        metric_for_best_model="eval_loss",
-        load_best_model_at_end=True,
     )
 
     trainer = Trainer(

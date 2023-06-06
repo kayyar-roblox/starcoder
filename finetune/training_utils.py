@@ -99,8 +99,11 @@ def run_training(
 
     print("Starting main loop")
 
+    output_dir = os.path.join(
+        flagValues.output_dir, flagValues.model_path, flagValues.data_dir
+    )
     training_args = TrainingArguments(
-        output_dir=flagValues.output_dir,
+        output_dir=output_dir,
         dataloader_drop_last=True,
         evaluation_strategy="steps",
         max_steps=flagValues.max_steps,
@@ -134,6 +137,4 @@ def run_training(
     trainer.train()
 
     print("Saving last checkpoint of the model")
-    model.save_pretrained(
-        os.path.join(flagValues.output_dir, "final_checkpoint/")
-    )
+    model.save_pretrained(os.path.join(output_dir, "final_checkpoint/"))

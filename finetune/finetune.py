@@ -46,6 +46,9 @@ flags.DEFINE_string(
 )
 flags.DEFINE_string("subset", None, "Subset.")
 flags.DEFINE_string("split", None, "Split.")
+flags.DEFINE_enum(
+    "dataset_type", "default", ["default", "openai"], "Dataset format."
+)
 
 # Data Processing
 flags.DEFINE_integer("size_valid_set", 10000, "Size of the validation set.")
@@ -56,7 +59,7 @@ flags.DEFINE_string("output_column_name", "completion", "Output column name.")
 
 # Training
 flags.DEFINE_integer("seq_length", 2048, "Sequence length.")
-flags.DEFINE_integer("max_steps", 10000, "Max steps.")
+flags.DEFINE_integer("max_steps", 4, "Max steps.")
 flags.DEFINE_integer("batch_size", 1, "Batch size.")
 flags.DEFINE_integer(
     "gradient_accumulation_steps", 16, "Gradient accumulation steps."
@@ -79,8 +82,8 @@ flags.DEFINE_integer("seed", 0, "Random seed.")
 flags.DEFINE_integer("num_workers", None, "Number of workers.")
 flags.DEFINE_string("output_dir", "./checkpoints", "Output directory.")
 flags.DEFINE_integer("log_freq", 100, "Log frequency.")
-flags.DEFINE_integer("eval_freq", 100, "Evaluation frequency.")
-flags.DEFINE_integer("save_freq", 1000, "Save frequency.")
+flags.DEFINE_integer("eval_freq", 2, "Evaluation frequency.")
+flags.DEFINE_integer("save_freq", 2, "Save frequency.")
 
 
 def main(unused_args) -> None:

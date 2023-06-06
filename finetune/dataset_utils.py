@@ -10,14 +10,20 @@ from utils import chars_token_ratio
 def create_datasets(
     tokenizer: GPT2TokenizerFast, args: flags.FlagValues
 ) -> TestTrainDataset:
-    dataset = load_dataset(
-        args.dataset_name,
+    load_dataset_args = dict(
         data_dir=args.subset,
         split=args.split,
         use_auth_token=True,
         num_proc=args.num_workers if not args.streaming else None,
         streaming=args.streaming,
     )
+    if args.dataset_type == "openai":
+        load_dataset_args["data_files"] = {
+            "train": "train.jsonl",
+            "test": "test.jsonl",
+        }
+
+    dataset = load_dataset(args.dataset_name, **load_dataset_args)
     if args.streaming:
         print("Loading the dataset in streaming mode")
         valid_data = dataset.take(args.size_valid_set)

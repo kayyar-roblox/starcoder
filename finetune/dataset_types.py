@@ -50,34 +50,21 @@ class ConstantLengthDataset(IterableDataset):
     def __iter__(self):
         iterator = iter(self.dataset)
         more_examples = True
-        print(
-            time.strftime(
-                f"%Y-%m-%d %H:%M:%S Start Epoch {self.epoch}",
-                time.localtime(time.time()),
-            )
-        )
         while more_examples:
             buffer, buffer_len = [], 0
             while True:
                 if buffer_len >= self.max_buffer_size:
                     break
                 try:
-                    buffer.append(
-                        prepare_sample_text(
-                            next(iterator),
-                            self.input_column_name,
-                            self.output_column_name,
-                        )
+                    sample_text = prepare_sample_text(
+                        next(iterator),
+                        self.input_column_name,
+                        self.output_column_name,
                     )
-                    buffer_len += len(buffer[-1])
+                    buffer.append(sample_text)
+                    buffer_len += len(sample_text)
                 except StopIteration:
                     if self.infinite:
-                        print(
-                            time.strftime(
-                                f"%Y-%m-%d %H:%M:%S Epoch {self.epoch}",
-                                time.localtime(time.time()),
-                            )
-                        )
                         self.epoch += 1
                         iterator = iter(self.dataset)
                     else:
@@ -93,7 +80,8 @@ class ConstantLengthDataset(IterableDataset):
                 input_ids = all_token_ids[i : i + self.seq_length]
                 if len(input_ids) == self.seq_length:
                     self.current_size += 1
-                    yield {
+                    ret = {
                         "input_ids": torch.LongTensor(input_ids),
                         "labels": torch.LongTensor(input_ids),
                     }
+                    yield ret

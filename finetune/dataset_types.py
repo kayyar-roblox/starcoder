@@ -78,10 +78,15 @@ class ConstantLengthDataset(IterableDataset):
                 all_token_ids.extend(tokenized_input + [self.concat_token_id])
             for i in range(0, len(all_token_ids), self.seq_length):
                 input_ids = all_token_ids[i : i + self.seq_length]
-                if len(input_ids) == self.seq_length:
-                    self.current_size += 1
-                    ret = {
-                        "input_ids": torch.LongTensor(input_ids),
-                        "labels": torch.LongTensor(input_ids),
-                    }
-                    yield ret
+                # Pad the last element if necessary
+                if len(input_ids) < self.seq_length:
+                    num_padding_tokens = self.seq_length - len(input_ids)
+                    input_ids.extend(
+                        [self.concat_token_id] * num_padding_tokens
+                    )
+                assert len(input_ids) == self.seq_length
+                self.current_size += 1
+                yield {
+                    "input_ids": torch.LongTensor(input_ids),
+                    "labels": torch.LongTensor(input_ids),
+                }

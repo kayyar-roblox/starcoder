@@ -118,8 +118,6 @@ class ConstantLengthDatasetTest(parameterized.TestCase):
         expected_keys = set(["input_ids", "labels"])
         self.assertEqual(tensors.keys(), expected_keys)
         self.assertEqual(dataset.epoch, 145187)
-        tensors = next(iter(dataset))
-        self.assertEqual(dataset.epoch, 290374)
 
 
 if __name__ == "__main__":

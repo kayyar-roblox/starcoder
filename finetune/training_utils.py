@@ -41,7 +41,7 @@ class SavePeftModelCallback(TrainerCallback):
         pytorch_model_path = os.path.join(
             checkpoint_folder, "pytorch_model.bin"
         )
-        torch.save(kwargs["model"].state_dict(), pytorch_model_path)
+        torch.save({}, pytorch_model_path)
         return control
 
 
@@ -121,6 +121,7 @@ def run_training(
         bf16=flagValues.bf16,
         weight_decay=flagValues.weight_decay,
         run_name=f"{flagValues.model_path}-{flagValues.dataset_name}-finetuned",
+        metric_for_best_model="eval_loss",
         report_to="wandb",
         ddp_find_unused_parameters=False,
     )

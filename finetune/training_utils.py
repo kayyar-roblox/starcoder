@@ -100,7 +100,7 @@ def run_training(
     print("Starting main loop")
 
     output_dir = os.path.join(
-        flagValues.output_dir, flagValues.model_path, flagValues.data_dir
+        flagValues.output_dir, flagValues.model_path, flagValues.dataset_name
     )
     training_args = TrainingArguments(
         output_dir=output_dir,

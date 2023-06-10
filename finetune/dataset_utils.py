@@ -17,12 +17,6 @@ def create_datasets(
         num_proc=args.num_workers if not args.streaming else None,
         streaming=args.streaming,
     )
-    if args.dataset_type == "openai":
-        load_dataset_args["data_files"] = {
-            "train": "train.jsonl",
-            "test": "test.jsonl",
-        }
-
     dataset = load_dataset(args.dataset_name, **load_dataset_args)
     if args.streaming:
         print("Loading the dataset in streaming mode")
